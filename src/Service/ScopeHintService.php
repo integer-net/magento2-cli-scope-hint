@@ -13,27 +13,28 @@ class ScopeHintService
     private ScopeConfigInterface $scopeConfig;
     private StoreManagerInterface $storeManager;
 
-    public function __construct(ScopeConfigInterface $scopeConfig, StoreManagerInterface $storeManager)
-    {
+    public function __construct(
+        ScopeConfigInterface $scopeConfig,
+        StoreManagerInterface $storeManager
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
     }
 
     public function getConfigValuesForScopes(
-        string $configPath): array
-    {
-        $valueFromConfig = [];
+        string $configPath
+    ): array {
+        $configValues = [];
 
         // global scope
-        $valueFromConfig[] = [
+        $configValues[] = [
             'website' => '',
             'store'   => '',
             'value'   => $this->scopeConfig->getValue($configPath),
         ];
 
         foreach ($this->storeManager->getWebsites() as $website) {
-
-            $valueFromConfig[] = [
+            $configValues[] = [
                 'website' => $website->getCode(),
                 'store'   => '',
                 'value'   => $this->scopeConfig->getValue(
@@ -44,12 +45,11 @@ class ScopeHintService
             ];
 
             foreach ($this->storeManager->getStores() as $store) {
-
                 if ($store->getWebsiteId() !== $website->getId()) {
                     continue;
                 }
 
-                $valueFromConfig[] = [
+                $configValues[] = [
                     'website' => '',
                     'store'   => $store->getCode(),
                     'value'   => $this->scopeConfig->getValue(
@@ -61,6 +61,6 @@ class ScopeHintService
             }
         }
 
-        return $valueFromConfig;
+        return $configValues;
     }
 }

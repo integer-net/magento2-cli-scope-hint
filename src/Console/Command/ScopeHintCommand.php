@@ -20,8 +20,8 @@ class ScopeHintCommand extends Command
 
     public function __construct(
         ScopeHintService $scopeHintService,
-        string $name = null)
-    {
+        string $name = null
+    ) {
         parent::__construct($name);
         $this->scopeHintService = $scopeHintService;
     }
@@ -31,11 +31,20 @@ class ScopeHintCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('config:scopes')->setDescription('Displays the configuration values in all scopes')->addArgument(
-            'config_path',
-            InputArgument::REQUIRED,
-            'config path'
-        )->addOption('output', null, InputOption::VALUE_OPTIONAL, 'Options are table, json. table is default.');
+        $this
+            ->setName('config:scopes')
+            ->setDescription('Displays the configuration values in all scopes')
+            ->addArgument(
+                'config_path',
+                InputArgument::REQUIRED,
+                'config path'
+            )
+            ->addOption(
+                'output',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Options are table, json. table is default.'
+            );
 
         parent::configure();
     }
@@ -51,7 +60,9 @@ class ScopeHintCommand extends Command
             $output->writeln(json_encode($scopeValues, JSON_PRETTY_PRINT));
         } else {
             $table = new Table($output);
-            $table->setHeaders(['website', 'store', 'values'])->setRows($scopeValues);
+            $table
+                ->setHeaders(['website', 'store', 'values'])
+                ->setRows($scopeValues);
             $table->render();
         }
 
