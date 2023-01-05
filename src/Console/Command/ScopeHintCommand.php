@@ -61,7 +61,7 @@ class ScopeHintCommand extends Command
         } else {
             $table = new Table($output);
             $table
-                ->setHeaders(['website', 'store', 'values'])
+                ->setHeaders(['scope', 'scope_id', 'path', 'values'])
                 ->setRows($scopeValues);
             $table->render();
         }

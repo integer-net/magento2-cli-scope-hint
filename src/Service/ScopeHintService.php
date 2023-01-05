@@ -71,16 +71,18 @@ class ScopeHintService
 
         // global scope
         $configValues[] = [
-            'website' => '',
-            'store'   => '',
-            'value'   => $this->scopeConfig->getValue($configPath),
+            'scope' => 'default',
+            'scope_id'   => '',
+            'path' => $configPath,
+            'values'   => $this->scopeConfig->getValue($configPath),
         ];
 
         foreach ($this->storeManager->getWebsites() as $website) {
             $configValues[] = [
-                'website' => $website->getCode(),
-                'store'   => '',
-                'value'   => $this->scopeConfig->getValue(
+                'scope' => 'website',
+                'scope_id'   => $website->getCode(),
+                'path' => $configPath,
+                'values'   => $this->scopeConfig->getValue(
                     $configPath,
                     ScopeInterface::SCOPE_WEBSITE,
                     $website->getId()
@@ -93,9 +95,10 @@ class ScopeHintService
                 }
 
                 $configValues[] = [
-                    'website' => '',
-                    'store'   => $store->getCode(),
-                    'value'   => $this->scopeConfig->getValue(
+                    'scope' => 'store',
+                    'scope_id'   => $store->getCode(),
+                    'path' => $configPath,
+                    'values'   => $this->scopeConfig->getValue(
                         $configPath,
                         ScopeInterface::SCOPE_STORES,
                         $store->getId()
