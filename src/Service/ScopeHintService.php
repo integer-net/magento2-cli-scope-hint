@@ -24,12 +24,22 @@ class ScopeHintService
 
     public function getAllScopes() : array
     {
-        //$configArray = $this->treePaths->generate($this->scopeConfig->getValue(null));
+        $configArray = $this->scopeConfig->getValue(null);
 
-        //$all_configs = $this->scopeConfig->getValue(null);
+        $result = array();
+        $this->displayArrayRecursively($configArray, $result, "");
+        return $result;
+    }
 
+    function displayArrayRecursively($array, &$result_array, $path) : void {
 
-        return [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $this->displayArrayRecursively($value, $result_array, $path . $key . '/');
+            } else {
+                $result_array[] = $path . $key;
+            }
+        }
     }
 
     public function getScopesAsArray(): array
@@ -66,8 +76,6 @@ class ScopeHintService
         string $configPath
     ): array {
         $configValues = [];
-
-        //$allConfigPaths = $this->getScopesAsArray();
 
         // global scope
         $configValues[] = [
@@ -107,6 +115,9 @@ class ScopeHintService
             }
         }
 
+        $configValues[0]["values"] = str_replace('\n', ' ', $configValues[0]["values"]);
+        $configValues[1]["values"] = str_replace('\n', ' ', $configValues[1]["values"]);
+        $configValues[2]["values"] = str_replace('\n', ' ', $configValues[2]["values"]);
         return $configValues;
     }
 }

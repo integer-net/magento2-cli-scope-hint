@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace IntegerNet\CliScopeHint\Console\Command;
 
+use Codeception\Util\Debug;
 use IntegerNet\CliScopeHint\Service\ScopeHintService;
+use IntegerNet\CliScopeHint\Service\TreePaths;
 use Magento\Backend\Block\Widget\Tab;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Data\Tree;
 use Magento\Store\Model\ScopeInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -36,7 +39,7 @@ class ScopeHintCommand extends Command
             ->setDescription('Displays the configuration values in all scopes')
             ->addArgument(
                 'config_path',
-                InputArgument::REQUIRED,
+                InputArgument::OPTIONAL,
                 'config path'
             )
             ->addOption(
@@ -44,6 +47,12 @@ class ScopeHintCommand extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Options are table, json. table is default.'
+            )
+            ->addOption(
+                'all',
+                null,
+                InputOption::VALUE_NONE,
+                'Output all config scope paths'
             );
 
         parent::configure();
@@ -54,7 +63,43 @@ class ScopeHintCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $scopeValues = $this->scopeHintService->getConfigValuesForScopes($input->getArgument('config_path'));
+
+        $all_configs = $this->scopeHintService->getAllScopes();
+
+        // get all configurations
+        if($input->getOption('all')) {
+
+             $scopeValues = array();
+             foreach($all_configs as $element) {
+                 $result_values = $this->scopeHintService->getConfigValuesForScopes($element);
+                 foreach($result_values as $element2) {
+                     $scopeValues[] = $element2;
+                 }
+             }
+        }
+        else {
+
+            $input_arg = $input->getArgument('config_path');
+
+            // if path exists then values for config path are shown
+            if(in_array($input_arg, $all_configs)) {
+                $scopeValues = $this->scopeHintService->getConfigValuesForScopes($input->getArgument('config_path'));
+            }
+            else {
+                // if config path has sub paths those are determined
+                // get all config paths matching to the search string
+                foreach($all_configs as $element) {
+                    if(str_contains($element, $input_arg))
+                    {
+                        $config = $this->scopeHintService->getConfigValuesForScopes($element);
+                        foreach($config as $config_element)
+                        {
+                            $scopeValues[] = $config_element;
+                        }
+                    }
+                }
+            }
+        }
 
         if ($input->getOption('output') === 'json') {
             $output->writeln(json_encode($scopeValues, JSON_PRETTY_PRINT));
@@ -62,7 +107,9 @@ class ScopeHintCommand extends Command
             $table = new Table($output);
             $table
                 ->setHeaders(['scope', 'scope_id', 'path', 'values'])
-                ->setRows($scopeValues);
+                ->setRows($scopeValues)
+                ->setColumnMaxWidth(2, 60)
+                ->setColumnMaxWidth(3, 100);
             $table->render();
         }
 
