@@ -3,13 +3,7 @@ declare(strict_types=1);
 
 namespace IntegerNet\CliScopeHint\Console\Command;
 
-use Codeception\Util\Debug;
 use IntegerNet\CliScopeHint\Service\ScopeHintService;
-use IntegerNet\CliScopeHint\Service\TreePaths;
-use Magento\Backend\Block\Widget\Tab;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Data\Tree;
-use Magento\Store\Model\ScopeInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
