@@ -7,7 +7,6 @@ namespace IntegerNet\CliScopeHint\Service;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use IntegerNet\CliScopeHint\Service\TreePaths;
 
 class ScopeHintService
 {
@@ -26,47 +25,57 @@ class ScopeHintService
     {
         $configArray = $this->scopeConfig->getValue(null);
 
-        $result = array();
-        $this->displayArrayRecursively($configArray, $result, "");
-        return $result;
+        $resultArray = $this->parseArrayRecursively($configArray);
+
+        return $resultArray;
+
     }
 
-    function displayArrayRecursively($array, &$result_array, $path) : void {
+    private function parseArrayRecursively($array, ?string $path = null) : array {
+
+        $resultArray = [];
 
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $this->displayArrayRecursively($value, $result_array, $path . $key . '/');
+                $resultArray[] = $this->parseArrayRecursively($value, ($path ? $path . '/' : $path ). $key);
             } else {
-                $result_array[] = $path . $key;
-            }
+                $resultArray[] = $path . '/' . (!is_numeric($key) ? $key : $value); }
         }
+
+        return $this->flatten($resultArray);
+    }
+
+    private function flatten(array $array) {
+        $return = array();
+        array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
+        return $return;
     }
 
     public function getScopesAsArray(): array
     {
-        $result_array = [];
+        $resultArray = [];
 
-        $scope_array = $this->scopeConfig->getValue(null);
-        foreach ($scope_array as $element)
+        $scopeArray = $this->scopeConfig->getValue(null);
+        foreach ($scopeArray as $element)
         {
-            $result_array[] = $this->getConfigPathName($element);
+            $resultArray[] = $this->getConfigPathName($element);
         }
 
-        return $result_array;
+        return $resultArray;
     }
 
-    private function getConfigPathName($element, string $previous_path = ""): string
+    private function getConfigPathName($element, string $previousPath = ""): string
     {
         if(is_array($element)) {
-            foreach ($element as $array_name=>$array_elements)
+            foreach ($element as $arrayName=>$arrayElements)
             {
-                $previous_path .= '/' . $array_name;
-                $this->getConfigPathName($array_elements, $previous_path);
+                $previousPath .= '/' . $arrayName;
+                $this->getConfigPathName($arrayElements, $previousPath);
             }
         }
         else
         {
-            return $previous_path;
+            return $previousPath;
         }
 
         return "";
@@ -115,9 +124,6 @@ class ScopeHintService
             }
         }
 
-        $configValues[0]["values"] = str_replace('\n', ' ', $configValues[0]["values"]);
-        $configValues[1]["values"] = str_replace('\n', ' ', $configValues[1]["values"]);
-        $configValues[2]["values"] = str_replace('\n', ' ', $configValues[2]["values"]);
         return $configValues;
     }
 }

@@ -58,37 +58,37 @@ class ScopeHintCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        $all_configs = $this->scopeHintService->getAllScopes();
+        $allConfigs = $this->scopeHintService->getAllScopes();
 
         // get all configurations
         if($input->getOption('all')) {
 
              $scopeValues = array();
-             foreach($all_configs as $element) {
-                 $result_values = $this->scopeHintService->getConfigValuesForScopes($element);
-                 foreach($result_values as $element2) {
-                     $scopeValues[] = $element2;
+             foreach($allConfigs as $element) {
+                 $resultValues = $this->scopeHintService->getConfigValuesForScopes($element);
+                 foreach($resultValues as $scopePath) {
+                     $scopeValues[] = $scopePath;
                  }
              }
         }
         else {
 
-            $input_arg = $input->getArgument('config_path');
+            $inputArg = $input->getArgument('config_path');
 
             // if path exists then values for config path are shown
-            if(in_array($input_arg, $all_configs)) {
+            if(in_array($inputArg, $allConfigs)) {
                 $scopeValues = $this->scopeHintService->getConfigValuesForScopes($input->getArgument('config_path'));
             }
             else {
                 // if config path has sub paths those are determined
                 // get all config paths matching to the search string
-                foreach($all_configs as $element) {
-                    if(str_contains($element, $input_arg))
+                foreach($allConfigs as $scopePath) {
+                    if(str_contains($scopePath, $inputArg))
                     {
-                        $config = $this->scopeHintService->getConfigValuesForScopes($element);
-                        foreach($config as $config_element)
+                        $config = $this->scopeHintService->getConfigValuesForScopes($scopePath);
+                        foreach($config as $configElement)
                         {
-                            $scopeValues[] = $config_element;
+                            $scopeValues[] = $configElement;
                         }
                     }
                 }
