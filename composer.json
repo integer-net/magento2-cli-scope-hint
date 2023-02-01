@@ -1,0 +1,53 @@
+{
+    "name": "integer-net/magento2-cli-scope-hint",
+    "description": "This module shows the configuration values for all scopes on the command line",
+    "type": "magento2-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andreas Leurs",
+            "email": "al@integer-net.de"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "IntegerNet\\CliScopeHint\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "IntegerNet\\CliScopeHint\\": "tests/src"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
+    "require": {
+        "php": "~7.1||~7.2||~7.3||~7.4||~8.1",
+        "magento/framework": "^102.0.0||^103.0.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "phpunit/phpunit": "^6.0|^9.0",
+        "pds/skeleton": "^1.0",
+        "phpro/grumphp": "^v0.21.0",
+        "phpstan/phpstan": "^0.12.0",
+        "squizlabs/php_codesniffer": "^3.5",
+        "magento/magento-coding-standard": "@dev"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/"
+        ],
+        "post-update-cmd": [
+            "vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/"
+        ]
+    }
+}
