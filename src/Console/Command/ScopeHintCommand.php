@@ -77,7 +77,8 @@ class ScopeHintCommand extends Command
 
             // if path exists then values for config path are shown
             if(in_array($inputArg, $allConfigs)) {
-                $scopeValues = $this->scopeHintService->getConfigValuesForScopes($input->getArgument('config_path'));
+                $scopeValues = $this->scopeHintService
+                    ->getConfigValuesForScopes($input->getArgument('config_path'));
             }
             else {
                 // if config path has sub paths those are determined
