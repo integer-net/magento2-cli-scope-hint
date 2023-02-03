@@ -96,6 +96,12 @@ class ScopeHintCommand extends Command
             }
         }
 
+        // if no correct path is given a message is output to the user
+        if(!isset($scopeValues)) {
+            $output->writeln('Path "' . $input->getArgument('config_path') . '" not found in configs');
+            return \Magento\Framework\Console\Cli::RETURN_FAILURE;
+        }
+
         if ($input->getOption('output') === 'json') {
             $output->writeln(json_encode($scopeValues, JSON_PRETTY_PRINT));
         } else {
